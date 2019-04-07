@@ -51,7 +51,7 @@ python main.py
 #### Example Outputs
 Here are examples of output from a trained network:
 
-![Example 1](./Final_run/um_000000.png)  |  ![Example 2](./Final_run/umm_000000.png)  |  ![Example 3](./Final_run/uu_000000.png)  
+![Example 1](./Final_run/um_000008.png)  |  ![Example 2](./Final_run/umm_000014.png)  |  ![Example 3](./Final_run/uu_000001.png)  
 
 ### Submission
 1. All unit tests are passed
@@ -74,3 +74,10 @@ The function `train_nn` is implemented correctly. The loss of the network should
  - `main.py`
  - `project_tests.py`
  - Newest inference images from `runs` folder  (**all images from the most recent run are** [here](./Final_run/))
+ 
+ ### Reflection
+Occasionaly, non-roads are mislabeled as roads. Some example outputs where cars, other background are labeled as roads:
+![Example 1](./Final_run/um_000060.png)  |  ![Example 2](./Final_run/umm_000083.png)  |
+
+Occasionally, sections of roads are not labeled:
+![Example 1](./Final_run/um_000021.png)  |  ![Example 2](./Final_run/umm_000081.png)  |
