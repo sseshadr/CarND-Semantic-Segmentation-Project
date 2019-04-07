@@ -77,7 +77,9 @@ The function `train_nn` is implemented correctly. The loss of the network should
  
  ### Reflection
 Occasionaly, non-roads are mislabeled as roads. Some example outputs where cars, other background are labeled as roads:
-![Example 1](./Final_run/um_000060.png)  |  ![Example 2](./Final_run/umm_000083.png)  |
+![Example 1](./Final_run/um_000060.png)  |  ![Example 2](./Final_run/umm_000053.png)  |
 
 Occasionally, sections of roads are not labeled:
-![Example 1](./Final_run/um_000021.png)  |  ![Example 2](./Final_run/umm_000081.png)  |
+![Example 1](./Final_run/um_000074.png)  |  ![Example 2](./Final_run/umm_000081.png)  |
+
+Some more experimentation with using regularizers and validation sets could be done to see if that improves the results. Also, rather than just looking at loss as a metric for how well the network performs, using an IoU or precision/recall metric on a test set might give us a better insight into how different network structures and/or training hyper parameters perform against each other.
