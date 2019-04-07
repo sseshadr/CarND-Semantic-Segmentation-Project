@@ -77,7 +77,7 @@ The function `train_nn` is implemented correctly. The loss of the network should
  
  ### Reflection
 Occasionaly, non-roads are mislabeled as roads. Some example outputs where cars, other background are labeled as roads:
-![Example 1](./Final_run/um_000060.png)  |  ![Example 2](./Final_run/umm_000053.png)  |
+![Example 1](./Final_run/um_000060.png)  |  ![Example 2](./Final_run/um_000047.png)  |
 
 Occasionally, sections of roads are not labeled:
 ![Example 1](./Final_run/um_000074.png)  |  ![Example 2](./Final_run/umm_000081.png)  |
