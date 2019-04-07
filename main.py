@@ -62,22 +62,22 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     
     # Replacing FC layer by a 1D convolution layer to preserve spatial information
     # Regularization helps penalize large weight values during training
-    conv_1x1 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, strides=(1,1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    conv_1x1 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, strides=(1,1), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
     
     # Reverse convolution and stride of 2 helps upsample
-    fcn_1 = tf.layers.conv2d_transpose(conv_1x1, filters=vgg_layer4_out.get_shape().as_list()[-1], kernel_size=4, strides=(2,2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    fcn_1 = tf.layers.conv2d_transpose(conv_1x1, filters=vgg_layer4_out.get_shape().as_list()[-1], kernel_size=4, strides=(2,2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
     
     # Skip connection
     sc_1 = tf.add(fcn_1, vgg_layer4_out)
     
     # Reverse convolution and stride of 2 helps upsample
-    fcn_2 = tf.layers.conv2d_transpose(sc_1, filters=vgg_layer3_out.get_shape().as_list()[-1], kernel_size=4, strides=(2,2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    fcn_2 = tf.layers.conv2d_transpose(sc_1, filters=vgg_layer3_out.get_shape().as_list()[-1], kernel_size=4, strides=(2,2), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))
     
     # Skip connection
     sc_2 = tf.add(fcn_2, vgg_layer3_out)
     
     # Reverse convolution and stride of 2 helps upsample
-    fcn_3 = tf.layers.conv2d_transpose(sc_2, num_classes, 16, strides=(8,8), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))    
+    fcn_3 = tf.layers.conv2d_transpose(sc_2, num_classes, 16, strides=(8,8), padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3), kernel_initializer=tf.truncated_normal_initializer(stddev=0.01))    
     
     return fcn_3
 tests.test_layers(layers)
@@ -100,6 +100,14 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     
     # Standard cross entropy loss
     cross_entropy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=correct_lbl_reshaped))
+    
+    # this seems to be the most elegant way to add regularization loss, but need to check..
+    # l2_loss = tf.losses.get_regularization_loss()
+    # cross_entropy_loss += l2_loss
+    
+    reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+    reg_constant = 1  # Choose an appropriate one.
+    cross_entropy_loss += reg_constant * sum(reg_losses)
     
     # Training options
     train_op = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy_loss)
@@ -125,7 +133,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     """
     # TODO: Implement function
     keep_prob_val = 0.5
-    learning_rate_val = 0.001
+    learning_rate_val = 1e-4
 
     for epoch in range(epochs):
         total_loss = 0
@@ -156,8 +164,8 @@ def run():
     #  https://www.cityscapes-dataset.com/
     
     # Training parameters
-    epochs = 40
-    batch_size = 16
+    epochs = 20
+    batch_size = 4
     # keep_prob = 0.5
     # learning_rate = 0.001
     
